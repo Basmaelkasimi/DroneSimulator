@@ -1,4 +1,4 @@
-package com.drone.simulator;
+package main.java.com.drone.simulator;
 
 public class SimulatorBasic {
 }
