@@ -1,5 +1,4 @@
-package main.java.com.drone.simulator;
-
+package com.drone.simulator;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
