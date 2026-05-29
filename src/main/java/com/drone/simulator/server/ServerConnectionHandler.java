@@ -109,29 +109,38 @@ public class ServerConnectionHandler implements Runnable {
     }
 
     public void executeSimulation() {
-        DisplayWorker displayWorker = new DisplayWorker(map, drones);
 
-        List<DroneWorker> workers = new ArrayList<>();
-
-        displayWorker.start();
+        List<Thread> workers = new ArrayList<>();
 
         for (Drone drone : drones) {
-            DroneWorker worker = new DroneWorker(drone, map, displayWorker);
+            Thread worker = new Thread(() -> {
+                for (char command : drone.getCommands().toCharArray()) {
+                    drone.move(command, map);
+
+                    synchronized (map) {
+                        map.displayMap(drones);
+                    }
+
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            });
+
             workers.add(worker);
             worker.start();
         }
 
-        for (DroneWorker worker : workers) {
+        for (Thread worker : workers) {
             try {
                 worker.join();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }
-
-        displayWorker.stopDisplay();
     }
-
     public void sendResults(PrintWriter output) {
         output.println("SUCCESS");
 
